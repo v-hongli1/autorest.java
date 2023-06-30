@@ -4,6 +4,9 @@ pr: none
 pool:
   vmImage: "ubuntu-latest"
 
+variables:
+  - group: Release Secrets for GitHub
+
 jobs:
   - job: Build
 
@@ -19,55 +22,68 @@ jobs:
         inputs:
           versionSpec: '$(NodeVersion)'
 
-      - task: Maven@3
-        retryCountOnTaskFailure: 3
-        displayName: 'Build JAR'
-        inputs:
-          mavenPomFile: pom.xml
-          goals: 'clean verify package install'
-          options: '-P local,tsp -T 1C --no-transfer-progress'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: $(JavaVersion)
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: false
+#      - task: Maven@3
+#        retryCountOnTaskFailure: 3
+#        displayName: 'Build JAR'
+#        inputs:
+#          mavenPomFile: pom.xml
+#          goals: 'clean verify package install'
+#          options: '-P local,tsp -T 1C --no-transfer-progress'
+#          javaHomeOption: 'JDKVersion'
+#          jdkVersionOption: $(JavaVersion)
+#          jdkArchitectureOption: 'x64'
+#          publishJUnitResults: false
+#
+#      - task: Npm@1
+#        displayName: 'Install Dependencies for TypeSpec Java'
+#        inputs:
+#          command: install
+#          workingDir: ./typespec-extension
+#
+#      - task: Npm@1
+#        displayName: 'Build TypeSpec Java'
+#        inputs:
+#          command: custom
+#          customCommand: run build
+#          workingDir: ./typespec-extension
+#
+#      - task: Npm@1
+#        displayName: 'Lint TypeSpec Java'
+#        inputs:
+#          command: custom
+#          customCommand: run lint
+#          workingDir: ./typespec-extension
+#
+#      - task: Npm@1
+#        displayName: 'Check-Format TypeSpec Java'
+#        inputs:
+#          command: custom
+#          customCommand: run check-format
+#          workingDir: ./typespec-extension
+#
+#      - task: Npm@1
+#        displayName: 'Pack TypeSpec Java'
+#        inputs:
+#          command: custom
+#          customCommand: pack
+#          workingDir: ./typespec-extension
+#
+#      - script: |
+#          npm config set //registry.npmjs.org/:_authToken=$(azure-sdk-npm-token)
+#          ls *.tgz | npm publish -0 --access public
+#          npm config delete //registry.npmjs.org/:_authToken
+#        displayName: 'Publish TypeSpec Java to NPM'
+#        workingDirectory: ./typespec-extension
 
-      - task: Npm@1
-        displayName: 'Install Dependencies for TypeSpec Java'
+      - task: GitHubRelease@1
+        displayName: 'Create GitHub Release'
         inputs:
-          command: install
-          workingDir: ./typespec-extension
-
-      - task: Npm@1
-        displayName: 'Build TypeSpec Java'
-        inputs:
-          command: custom
-          customCommand: run build
-          workingDir: ./typespec-extension
-
-      - task: Npm@1
-        displayName: 'Lint TypeSpec Java'
-        inputs:
-          command: custom
-          customCommand: run lint
-          workingDir: ./typespec-extension
-
-      - task: Npm@1
-        displayName: 'Check-Format TypeSpec Java'
-        inputs:
-          command: custom
-          customCommand: run check-format
-          workingDir: ./typespec-extension
-
-      - task: Npm@1
-        displayName: 'Pack TypeSpec Java'
-        inputs:
-          command: custom
-          customCommand: pack
-          workingDir: ./typespec-extension
-
-      - script: |
-          npm config set //registry.npmjs.org/:_authToken=$(azure-sdk-npm-token)
-          ls *.tgz | npm publish -0 --access public
-          npm config delete //registry.npmjs.org/:_authToken
-        displayName: 'Publish TypeSpec Java to NPM'
-        workingDirectory: ./typespec-extension
+          gitHubConnection: '$(azuresdk-github-pat)'
+          repositoryName: '$(Build.Repository.Name)'
+          action: 'create'
+          target: '$(Build.SourceVersion)'
+          tagSource: 'userSpecifiedTag'
+          tag: '@azure-tools/typespec-java_$(node -p -e "require(''./typespec-extension/package.json'').version")'
+          releaseNotesSource: ./typespec-extension/readme.md
+          isPreRelease: true
+          addChangeLog: false
