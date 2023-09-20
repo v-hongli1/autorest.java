@@ -1,0 +1,38 @@
+schedules:
+- cron: '0 0 * * *'
+  displayName: Nightly dev build
+  branches:
+    include:
+    - main
+
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: sdk-repository
+      type: github
+      endpoint: Azure
+      name: Azure/azure-sdk-for-java
+      ref: refs/heads/users/pahallis/cookiecutter
+    - repository: azure-sdk-tools
+      type: github
+      endpoint: Azure
+      name: Azure/azure-sdk-tools
+      ref: refs/heads/users/pahallis/cookiecutter
+
+extends:
+  template: eng/pipelines/templates/stages/archetype-autorest-preview.yml@azure-sdk-tools
+  parameters:
+    RegenerationJobCount: 1
+    BuildAlphaVersion: true
+    UseTypeSpecNext: ${{ parameters.UseTypeSpecNext }}
+    EmitterPackageJsonPath: typespec-extension/package.json
+    Packages:
+    - name: generator
+      file: autorest-java-*.tgz
+      type: npm
+    - name: emitter
+      file: azure-tools-typespec-java-*.tgz
+      type: npm
+    PublishTarget: 'internal'
