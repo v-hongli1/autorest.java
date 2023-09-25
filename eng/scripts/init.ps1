@@ -2,22 +2,13 @@ param(
     [string] $UseTypeSpecNext
 )
 
-[bool]$UseTypeSpecNext = $useTypeSpecNext -in 'true', '1', 'yes', 'y'
-
 $ErrorActionPreference = 'Stop'
 
-$root = (Resolve-Path "$PSScriptRoot/../..").Path.Replace('\', '/')
+. "$PSScriptRoot/helpers.ps1"
 
-function invoke($command) {
-    Write-Host "> $command"
-    Invoke-Expression $command
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Command failed: $command"
-        exit $LASTEXITCODE
-    }
-}
+[bool]$UseTypeSpecNext = ConvertTo-Bool $UseTypeSpecNext
 
-Push-Location $root
+Push-Location $RepoRoot
 try {
   #  TODO: pull tool versions from package.json
   invoke "npm install -g @typespec/compiler@next"
@@ -33,7 +24,7 @@ try {
   Get-Content typespec-tests/package.json -Raw
 
   npm install
-  $env:path = $env:path = "$root/node_modules/.bin;$env:path"
+  $env:path = $env:path = "$RepoRoot/node_modules/.bin;$env:path"
 }
 finally {
     Pop-Location
