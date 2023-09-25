@@ -10,7 +10,9 @@
     "generate": "./generate",
     "testserver-run": "autorest-testserver run",
     "testserver-stop": "autorest-testserver stop",
-    "testserver-coverage-publish": "autorest-testserver-coverage publish"
+    "testserver-coverage-publish": "autorest-testserver-coverage publish",
+    "ci-init": "pwsh eng/scripts/init.ps1",
+    "ci-build": "pwsh eng/scripts/build.ps1"
   },
   "repository": {
     "type": "git",

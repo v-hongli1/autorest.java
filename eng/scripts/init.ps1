@@ -11,10 +11,11 @@ $ErrorActionPreference = 'Stop'
 Push-Location $RepoRoot
 try {
   #  TODO: pull tool versions from package.json
-  invoke "npm install -g @typespec/compiler@next"
-
   if ($UseTypeSpecNext ) {
+    invoke "npm install -g @typespec/compiler@next"
     invoke "npx @azure-tools/typespec-bump-deps typespec-extension/package.json typespec-tests/package.json --add-npm-overrides"
+  } else {
+    invoke "npm install -g @typespec/compiler"
   }
   
   Write-Host "typespec-extension/package.json"

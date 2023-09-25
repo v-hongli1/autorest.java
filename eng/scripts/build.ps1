@@ -39,25 +39,10 @@ try {
     Write-Host "====================================="
     
     Write-Host "Dependencies of typespec-java"
-    Set-Location typespec-extension
-    invoke "npm ls --all"
-    
-    Write-Host "Dependencies of typespec-java-tests"
-    Set-Location typespec-tests
+    Set-Location "$RepoRoot/typespec-extension"
     invoke "npm ls --all"
 
     Set-Location $RepoRoot
-
-    Write-Host "`n`n====================================="
-    Write-Host "Revert package.json"
-    Write-Host "====================================="
-    invoke "git checkout package.json typespec-extension/package.json typespec-tests/package.json"
-    
-    Write-Host "`n`n====================================="
-    Write-Host "Git Diff"
-    Write-Host "====================================="
-    invoke "git status"
-    invoke "git diff"
 }
 finally {
     Pop-Location

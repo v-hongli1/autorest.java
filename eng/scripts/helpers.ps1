@@ -3,7 +3,7 @@ $RepoRoot = (Resolve-Path "$PSScriptRoot/../..").Path.Replace('\', '/')
 function ConvertTo-Bool($value) {
   if($value -in 'true', '1', 'yes', 'y') {
     return $true
-  } elseif($value -in 'true', '1', 'yes', 'y') {
+  } elseif($value -in 'false', '0', 'no', 'n') {
     return $false
   } else {
     throw "Unable to convert '$value' to a boolean. Value must be one of 'true', '1', 'yes', 'y', 'false', '0', 'no', 'n'"
