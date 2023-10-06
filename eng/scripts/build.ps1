@@ -1,14 +1,14 @@
 param(
     [string] $BuildNumber,
     [string] $Output,
-    [string] $BuildAlphaVersion
+    [string] $BuildPreviewVersion
 )
 
 $ErrorActionPreference = 'Stop'
 
 . "$PSScriptRoot/helpers.ps1"
 
-[bool]$BuildAlphaVersion = ConvertTo-Bool($BuildAlphaVersion)
+[bool]$BuildPreviewVersion = ConvertTo-Bool($BuildPreviewVersion)
 
 Push-Location $RepoRoot
 try {

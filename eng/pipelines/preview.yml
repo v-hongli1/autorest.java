@@ -31,9 +31,10 @@ extends:
   template: eng/pipelines/templates/stages/archetype-autorest-preview.yml@azure-sdk-tools
   parameters:
     RegenerationJobCount: 1
-    BuildAlphaVersion: true
+    BuildPreviewVersion: true
     UseTypeSpecNext: ${{ parameters.UseTypeSpecNext }}
     EmitterPackageJsonPath: typespec-extension/package.json
+    PublishTarget: Internal
     Packages:
     - name: generator
       file: autorest-java-*.tgz
@@ -41,4 +42,3 @@ extends:
     - name: emitter
       file: azure-tools-typespec-java-*.tgz
       type: npm
-    PublishTarget: 'internal'
